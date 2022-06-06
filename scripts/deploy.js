@@ -11,10 +11,19 @@ async function main() {
     const tkt = await Ticket.deploy();
     console.log("Ticket address: ", tkt.address);
 
-    const Proxy = await ethers.getContractFactory("Proxy");
-    const proxy = await upgrades.deployProxy(Proxy);
-    await proxy.deployed();
-    console.log("Proxy deployed to:", proxy.address);
+    const Factory = await ethers.getContractFactory("Factory");
+    const factory = await Factory.deploy();
+    console.log("Factory deployed to: ", factory.address);
+
+    const bytecode = await factory.getByteCode(deployer.address);
+    const address = await factory.getAddress(bytecode, 777);
+    await factory.deploy(777);    
+    console.log("Proxy deployed to: ", address);
 }
 
-main();
+main()
+    .then(() => process.exit(0))
+    .catch(error => {
+        console.error(error);
+        process.exit(1);
+    });

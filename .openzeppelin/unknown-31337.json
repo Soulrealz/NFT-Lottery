@@ -2,19 +2,19 @@
   "manifestVersion": "3.2",
   "admin": {
     "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-    "txHash": "0x6254a8045cbf0bf02d75f706505f7c65e57112be49a15b5a8be3e8b4714bc3ae"
+    "txHash": "0xb5431faed87977b4ae4b2d37cede262a691ff5ce47ade442db6f9b443e5edb6e"
   },
   "proxies": [
     {
       "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-      "txHash": "0x51ec10c1f606f3198d34243080fb7c40b7754e587bfe3dfe52fdcb76e9db72a8",
+      "txHash": "0xc8d3ae6e82aca5ad93394c3c349cb1dabf03bc7cdfaa5a0e30487e6a7fae051c",
       "kind": "transparent"
     }
   ],
   "impls": {
     "5c489a6460fd3afb294226e2f0358d7879ffe4753615c5ede733f8c57ffc31ed": {
       "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "txHash": "0x0de2dcf870008700ea921661bcb7c7fbbe287c5cdab14859134cdc9b112de719",
+      "txHash": "0x3f898fd3174d9929182926cefa84136ac6981a55383278d87db098d6b1ae90f0",
       "layout": {
         "storage": [
           {
@@ -23,7 +23,7 @@
             "slot": "0",
             "type": "t_address",
             "contract": "Proxy",
-            "src": "contracts\\Proxy.sol:6"
+            "src": "contracts\\Proxy.sol:5"
           }
         ],
         "types": {

@@ -2,7 +2,6 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 //import "../node_modules/@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
-import "hardhat/console.sol";
 
 contract Ticket is ERC721Upgradeable {
     address public owner;
@@ -22,6 +21,7 @@ contract Ticket is ERC721Upgradeable {
 
     event MintedSuccessfully(address receiver, uint totalMinted);
     event ExtendLottery(uint extendedTo);
+    event SurpriseWinner(address receiver);
 
     modifier onlyOwner {
         require(msg.sender == owner, "Only owner can perform this.");
@@ -93,5 +93,13 @@ contract Ticket is ERC721Upgradeable {
             players = new address payable[](0);
             lotteryExpiration[++lotteryId] = block.timestamp + duration;
         }
+    }
+
+    function surpriseWinner() public onlyOwner {
+        require(players.length > 0, "No participants to choose a surprise winner from.");
+        uint index = getRandomNumber() % players.length;
+        players[index].transfer(address(this).balance / 2);
+
+        emit SurpriseWinner(players[index]);
     }
 }

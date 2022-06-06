@@ -1,9 +1,13 @@
 pragma solidity 0.8.9;
 
 contract Proxy {
-    bytes32 private constant _IMPL_SLOT =
-        bytes32(uint256(keccak256("eip1967.proxy.ticketContract")) - 1);
+    //bytes32 private constant _IMPL_SLOT = bytes32(uint256(keccak256("eip1967.proxy.ticketContract")) - 1);
     address public ticketContract;
+    address public owner;
+
+    constructor(address _owner) {
+        owner = _owner;
+    }
 
     function setTicketContract(address _ticketContract) public {
         ticketContract = _ticketContract;
