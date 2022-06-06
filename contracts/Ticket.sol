@@ -1,29 +1,53 @@
 pragma solidity 0.8.9;
 
-import "../node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 //import "../node_modules/@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
-import "../node_modules/hardhat/console.sol";
+import "hardhat/console.sol";
 
-contract Ticket is ERC721, Ownable {
+contract Ticket is ERC721Upgradeable {
+    address public owner;
     mapping(address => mapping(uint => bool)) public mintedWallets;
     uint public constant mintPrice = 0.05 ether;
     uint public totalSupply;
-    uint public maxSupply;
+    uint public maxSupply = 100_000_000;
 
     address payable[] public players;
     uint public lotteryId;
     uint public duration = 6 hours;
     mapping(uint => uint) public lotteryExpiration;
     mapping(uint => address) public winnerHistory;
+    mapping(uint => address) private __owners;
+
+    bool private initialized;
 
     event MintedSuccessfully(address receiver, uint totalMinted);
     event ExtendLottery(uint extendedTo);
+
+    modifier onlyOwner {
+        require(msg.sender == owner, "Only owner can perform this.");
+        _;
+    }
     
-    constructor() ERC721("Ticket", "TKT") {
-        maxSupply = 100_000_000;
+    function initialize() public {
+        require(!initialized, "Already initialized");
+        __ERC721_init("Ticket", "TKT");
         lotteryId = 1;
-        lotteryExpiration[lotteryId] = block.timestamp + duration;   
+        lotteryExpiration[lotteryId] = block.timestamp + 6 hours;
+        owner = msg.sender;
+        maxSupply = 100_000_000;
+    }
+
+    function getMax() public view returns (uint) {
+        return maxSupply;
+    }
+    function getName() public view returns (string memory) {
+        return name();
+    }
+    function getSymbol() public view returns (string memory) {
+        return symbol();
+    }
+    function getExpiration() public view returns (uint) {
+        return lotteryExpiration[lotteryId];
     }
 
     function mintTicket() external payable {
@@ -57,7 +81,6 @@ contract Ticket is ERC721, Ownable {
 
     function pickWinner() public onlyOwner {
         require(lotteryExpiration[lotteryId] < block.timestamp, "This lottery is still ongoing.");
-        
         if(players.length == 0) {
             lotteryExpiration[lotteryId] = block.timestamp + duration;
             emit ExtendLottery(lotteryExpiration[lotteryId]);
@@ -66,7 +89,6 @@ contract Ticket is ERC721, Ownable {
             uint index = getRandomNumber() % players.length;
             players[index].transfer(address(this).balance);
             winnerHistory[lotteryId++] = players[index];
-
             //reset state
             players = new address payable[](0);
             lotteryExpiration[++lotteryId] = block.timestamp + duration;

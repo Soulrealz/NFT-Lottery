@@ -1,4 +1,4 @@
-const { ethers } = require("hardhat");
+const { ethers, upgrades } = require("hardhat");
 
 async function main() {
     const [deployer] = await ethers.getSigners();
@@ -7,13 +7,14 @@ async function main() {
     const balance = await deployer.getBalance();
     console.log("Account balance: ", balance.toString());
 
-    const Ticket = await ethers.getContractFactory('Ticket');
+    const Ticket = await ethers.getContractFactory("Ticket");
     const tkt = await Ticket.deploy();
     console.log("Ticket address: ", tkt.address);
+
+    const Proxy = await ethers.getContractFactory("Proxy");
+    const proxy = await upgrades.deployProxy(Proxy);
+    await proxy.deployed();
+    console.log("Proxy deployed to:", proxy.address);
 }
 
-main().then(() => process.exit(0))
-        .catch(error => {
-            console.error(error);
-            process.exit(1);
-        })
+main();
